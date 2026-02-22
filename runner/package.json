@@ -1,0 +1,15 @@
+{
+  "name": "openpgp-discord",
+  "module": "./src/main.js",
+  "type": "module",
+  "scripts": {
+    "build": "bun build ./src/main.js --outfile ../runner.js --target browser --format esm"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "dependencies": {
+    "openpgp": "^6.3.0",
+    "sweetalert2": "^11.26.19"
+  }
+}

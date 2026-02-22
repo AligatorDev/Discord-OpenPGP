@@ -1,0 +1,20 @@
+{
+    "manifest_version": 3,
+    "name": "Discord OpenPGP",
+    "version": "1.0",
+    "description": "Discord OpenPGP",
+    "permissions": [],
+    "host_permissions": [
+        "https://*.discord.com/*"
+    ],
+    "content_scripts": [
+      {
+        "run_at": "document_end",
+        "matches": [ 
+          "https://*.discord.com/*"
+        ],
+        "js": ["runner.js"],
+        "world": "MAIN"
+      }
+    ]
+  }
