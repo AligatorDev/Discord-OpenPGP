@@ -16,7 +16,7 @@ A PGP encryption layer for Discord, implemented via using openpgp.js. This proje
 
 #### Installing
 
-To install, ensure Node.js is installed and run the start.bat script.
+To install, ensure Node.js is installed, run npm install and run the start.bat script.
 
 #### Building the injected script
 To build install bun and run the **build.bat** script  
