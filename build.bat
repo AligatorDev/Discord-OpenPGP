@@ -1,1 +1,0 @@
-bun build ./runner/main.js --outfile ./runner.js

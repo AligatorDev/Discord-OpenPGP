@@ -66,7 +66,7 @@ const map = {
 const reg = /[&<>"'/]/ig;
     
 export function sanitizeForHtml(rawKey) {
-    return raw.replace(reg, (match) => map[match]);
+    return rawKey.replace(reg, (match) => map[match]);
 }
 
 
