@@ -13970,7 +13970,7 @@ var map = {
 };
 var reg = /[&<>"'/]/ig;
 function sanitizeForHtml(rawKey) {
-  return raw.replace(reg, (match) => map[match]);
+  return rawKey.replace(reg, (match) => map[match]);
 }
 async function GetCurrentPassword() {
   if (database.requirePassword && !password) {

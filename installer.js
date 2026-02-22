@@ -7,11 +7,15 @@ const installationPath = path.join(process.env.LOCALAPPDATA,"DiscordEncryption")
 export function isDir(path) {
     return fs.statSync(path).isDirectory()
 }
+
+function numberize(str) {
+    return parseFloat(str.replace("app-","").replaceAll(".",""))
+}
 export function checkDiscordInstallation(Path,retpath) {
     if(!fs.existsSync(Path) || !isDir(Path)) return false;
     let folders = fs.readdirSync(Path).filter((v)=>isDir(path.join(Path,v)));
-    let app = folders.filter((v)=>v.startsWith("app-"));
-    if (app.length == 0 || app.length > 1) return false;
+    let app = folders.filter((v)=>v.startsWith("app-")).sort((a,b)=>numberize(b)-numberize(a));
+    if (app.length == 0) return false;
     return fs.existsSync(path.join(Path,app[0],"Discord.exe")) ? (retpath ? path.join(Path,app[0]) : true ) :false;
 }
 
