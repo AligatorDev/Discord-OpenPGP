@@ -3117,20 +3117,15 @@ function init_hook() {
     const hook = sendHooks.find((h) => this._url.includes(h.selector));
     if (hook) {
       const self2 = this;
-      const idMatch = this._url.match(/channels\/(\d+)(?:\/messages\/(\d+))?/);
-      self2._ids = {
-        channelId: idMatch ? idMatch[1] : null,
-        messageId: idMatch ? idMatch[2] : null
-      };
       const originalOnReadyStateChange = self2.onreadystatechange;
       self2.onreadystatechange = function() {
         if (self2.readyState === 4 && hook.onResponse) {
           try {
-            const modifiedResponse = hook.onResponse(self2.responseText, self2._ids, self2._url);
+            const modifiedResponse = hook.onResponse(self2.responseText, self2._url);
             Object.defineProperty(self2, "responseText", { value: modifiedResponse });
             Object.defineProperty(self2, "response", { value: modifiedResponse });
           } catch (e) {
-            console.error("Erro no hook de resposta:", e);
+            console.error(e);
           }
         }
         if (originalOnReadyStateChange)
@@ -3142,7 +3137,7 @@ function init_hook() {
             const modifiedBody = await hook.cb(body, self2._url);
             originalSend.call(self2, modifiedBody);
           } catch (e) {
-            console.error("Erro no hook de envio:", e);
+            console.error(e);
             originalSend.call(self2, body);
           }
         })();
@@ -3191,7 +3186,7 @@ async function createPersistentStorage(key, initialData = {}) {
   const rootTarget = savedData || JSON.parse(JSON.stringify(initialData));
   const save = () => {
     const cleanData = JSON.parse(JSON.stringify(rootTarget));
-    accessIDB("readwrite", (store) => store.put(cleanData, key)).catch((err) => console.error("Erro no IDB Save:", err));
+    accessIDB("readwrite", (store) => store.put(cleanData, key)).catch((err) => console.error(err));
   };
   const createHandler = () => ({
     get(target, prop) {
@@ -13522,7 +13517,7 @@ async function Encrypt(plainText, recipientPublicKeyArmored) {
     });
     return armoredEncrypted;
   } catch (error) {
-    console.error("Erro ao criptografar:", error);
+    console.error(error);
     return "Error in encryption";
   }
 }
@@ -13541,7 +13536,7 @@ async function GeneratePGPKey() {
   const { privateKey, publicKey, revocationCertificate } = await uo({
     type: "ecc",
     curve: "curve25519",
-    userIDs: [{ name: "Seu Nome", email: "email@exemplo.com" }],
+    userIDs: [{ name: "John Doe", email: "john@doe.com" }],
     passphrase: await GetCurrentPassword() || ""
   }).catch(console.error);
   database.myKeyPair = {
@@ -13563,7 +13558,7 @@ function markMessageAsEncrypted(messageId) {
 function clearTextBoxOneByOne(editor2) {
   const editor = editor2 || document.querySelector('div[data-slate-editor="true"]');
   if (!editor)
-    return console.error("Editor não encontrado!");
+    return console.error("editor not found!");
   console.log(editor2);
   editor.focus();
   let textLength = editor.textContent.length;
@@ -13673,21 +13668,19 @@ function enableEncryption(bool) {
   let lock = document.getElementById("encryptionstatus");
   lock.innerHTML = ENCRYPTMESSAGES ? "\uD83D\uDD12" : "\uD83D\uDD13";
 }
-async function start_decrypt(id, textoBruto, elemento) {
+async function start_decrypt(id, text, element) {
   try {
-    const resultado = await onMessage(textoBruto, id);
-    msgCache.set(id, resultado);
-    console.log(id, resultado);
-    if (elemento && document.contains(elemento)) {
-      elemento.innerText = resultado;
+    const res = await onMessage(text, id);
+    msgCache.set(id, res);
+    if (element && document.contains(element)) {
+      element.innerText = res;
     }
   } catch (e2) {
-    console.error("Erro na descriptografia:", e2, textoBruto);
+    console.error(e2, text);
   }
 }
-function clearPgpTrash(textoSujo) {
-  let txt = textoSujo.replace(/[^A-Za-z0-9+/=]/g, "");
-  console.log("Enviado ", txt);
+function clearPgpTrash(tx) {
+  let txt = tx.replace(/[^A-Za-z0-9+/=]/g, "");
   return txt;
 }
 function ProcessEditor(rootNode) {
@@ -14197,11 +14190,11 @@ function renderConfigPage() {
   menuController(document.querySelector('[data-settings-panel-scroller="true"]'));
 }
 function renderMenu() {
-  if (document.getElementById("configuracao"))
+  if (document.getElementById("config_disc_pgp"))
     return;
   let adv = document.querySelector('[data-settings-sidebar-item="advanced_panel"]');
   adv.insertAdjacentHTML("afterend", `
-<div id = "configuracao" data-settings-sidebar-item="encryption_config" class="itemContainer_caf372" >
+<div id = "config_disc_pgp" data-settings-sidebar-item="encryption_config" class="itemContainer_caf372" >
 <div class="item_caf372" role="listitem" data-list-item-id="settings-sidebar___advanced_sidebar_item" tabindex="-1">
     <div class="itemContent_caf372">
         <svg class="icon_caf372" aria-hidden="true" role="img"
@@ -14212,7 +14205,7 @@ function renderMenu() {
     </div>
 </div>
 </div>`);
-  document.getElementById("configuracao").onclick = renderConfigPage;
+  document.getElementById("config_disc_pgp").onclick = renderConfigPage;
 }
 function waitAndClickSettings() {
   const observer = new MutationObserver((mutations, obs) => {
@@ -14238,7 +14231,6 @@ function waitAndClickSettings() {
 waitAndClickSettings();
 
 // src/main.js
-window.tomapauu = window.localStorage;
 async function main() {
   await init_hook();
   await StartDB();
